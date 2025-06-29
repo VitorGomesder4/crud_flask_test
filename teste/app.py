@@ -8,7 +8,7 @@ app = Flask(__name__) #Name para executar de forma manual
 tasks = []
 tasks_id_control = 1 #Padronizador
 
-@app.route("/tasks", methods = ['POST'])
+@app.route("/tasks", methods = ['POST']) #Create
 def create_task():
 
     global tasks_id_control
@@ -25,7 +25,7 @@ def create_task():
 
     return jsonify({"message": "Nova tarefa criada com sucesso"})
 
-@app.route("/tasks", methods = ['GET'])
+@app.route("/tasks", methods = ['GET']) #Read
 def get_tasks():
 
     task_list = [task.to_dict() for task in tasks]
@@ -33,7 +33,7 @@ def get_tasks():
     output = {"tasks": [task_list], "total_tasks": len(task_list)}
     return jsonify(output)
 
-@app.route("/tasks/<int:id_task>", methods = ['GET'])
+@app.route("/tasks/<int:id_task>", methods = ['GET']) #Read por ID
 def get_task(id_task):
     for task in tasks:
         if task.id == id_task:
@@ -41,11 +41,49 @@ def get_task(id_task):
         
     return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404
 
-@app.route("/user/<int:username_id>")
-def show_user(username_id):
-    print(username_id)
-    print(type(username_id))
-    return str(username_id)
+@app.route("/tasks/<int:id>", methods = ['PUT']) #Update
+def update_task(id):
+    task = None
+    for t in tasks:
+        if t.id == id:
+            task = t
+            break #Apos achar e guardar a tarefa requerida break para não continuar o loop, perfomance
+
+    print(task)
+    if task == None:
+        return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404
+    
+    data = request.get_json()
+    task.title = data["title"]
+    task.description = data["description"]
+    task.completed = data["completed"]
+
+    print(task)
+    return jsonify({"message": "Atualização foi um Sucesso"})
+
+@app.route("/tasks/<int:id>", methods = ['DELETE'])
+def delete_task(id):
+    task = None
+
+    for t in tasks:
+        if t.id == id:
+            task = t
+            break #Apos achar e guardar a tarefa requerida break para não continuar o loop, perfomance
+
+    if task == None:
+        return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404
+    
+    tasks.remove(task)
+    return jsonify({"message": "Tarefa deletada com sucesso"})
+
+
+
+
+#@app.route("/user/<int:username_id>") #Exemplo de 'converter'
+#def show_user(username_id):
+#    print(username_id)
+#    print(type(username_id))
+#    return str(username_id)
 
 if __name__ == "__main__":
     app.run(debug = True) #Uso apenas em desenvolvimento local
