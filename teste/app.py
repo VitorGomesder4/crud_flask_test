@@ -8,6 +8,7 @@ app = Flask(__name__) #Name para executar de forma manual
 tasks = []
 tasks_id_control = 1 #Padronizador
 
+
 @app.route("/tasks", methods = ['POST']) #Create
 def create_task():
 
@@ -23,7 +24,8 @@ def create_task():
 
     print(tasks)
 
-    return jsonify({"message": "Nova tarefa criada com sucesso", "id": new_task.id})
+    return jsonify({"message": "Nova tarefa criada com sucesso", "id": new_task.id}) #RESPONSE
+
 
 @app.route("/tasks", methods = ['GET']) #Read
 def get_tasks():
@@ -31,15 +33,17 @@ def get_tasks():
     task_list = [task.to_dict() for task in tasks]
 
     output = {"tasks": [task_list], "total_tasks": len(task_list)}
-    return jsonify(output)
+    return jsonify(output) #RESPONSE
+
 
 @app.route("/tasks/<int:id_task>", methods = ['GET']) #Read por ID
 def get_task(id_task):
     for task in tasks:
         if task.id == id_task:
-            return jsonify(task.to_dict())
+            return jsonify(task.to_dict()) #RESPONSE
         
-    return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404
+    return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404 #RESPONSE
+
 
 @app.route("/tasks/<int:id>", methods = ['PUT']) #Update
 def update_task(id):
@@ -51,7 +55,7 @@ def update_task(id):
 
     print(task)
     if task == None:
-        return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404
+        return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404 #RESPONSE
     
     data = request.get_json()
     task.title = data["title"]
@@ -59,7 +63,8 @@ def update_task(id):
     task.completed = data["completed"]
 
     print(task)
-    return jsonify({"message": "Atualização foi um Sucesso"})
+    return jsonify({"message": "Atualização foi um Sucesso"}) #RESPONSE
+
 
 @app.route("/tasks/<int:id>", methods = ['DELETE'])
 def delete_task(id):
@@ -71,10 +76,11 @@ def delete_task(id):
             break #Apos achar e guardar a tarefa requerida break para não continuar o loop, perfomance
 
     if task == None:
-        return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404
+        return jsonify({"message": "Não foi possivel encontrar a atividade"}), 404 #RESPONSE
     
     tasks.remove(task)
-    return jsonify({"message": "Tarefa deletada com sucesso"})
+    return jsonify({"message": "Tarefa deletada com sucesso"}) #RESPONSE
+
 
 
 
